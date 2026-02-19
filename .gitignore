@@ -1,0 +1,9 @@
+# Build Files
+
+*.o
+*.d
+main
+
+# Misc
+
+.env
