@@ -1,12 +1,34 @@
 SHELL := bash
 
 CC := gcc
-CFLAGS := -std=c99 -g -Iinclude -Wall -Wextra -MMD -MP -pthread
+CFLAGS := -std=c99
+CFLAGS += -Iinclude
+CFLAGS += -Wall -Wextra
+CFLAGS += -MMD -MP
+CFLAGS += -pthread
+
+ifdef DEBUG
+	CFLAGS += -g
+endif
 
 LD := $(CC)
-LDLIBS := -lm -lSDL3 -pthread
+LDFLAGS := -pthread
+LDLIBS := -lm -lSDL3
 
-SRC := $(shell fd -e c . src)
+ifeq ($(DEBUG),ASAN)
+	CFLAGS += -fsanitize=address
+	LDFLAGS += -fsanitize=address
+endif
+ifeq ($(DEBUG),MSAN)
+	CFLAGS += -fsanitize=memory
+	LDFLAGS += -fsanitize=memory
+endif
+ifeq ($(DEBUG),TSAN)
+	CFLAGS += -fsanitize=thread
+	LDFLAGS += -fsanitize=thread
+endif
+
+SRC := $(shell find src -type f -name "*.c")
 OBJ := $(SRC:src/%.c=build/%.o)
 DEP := $(OBJ:.o=.d)
 EXE := main
