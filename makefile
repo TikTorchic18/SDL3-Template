@@ -13,7 +13,8 @@ endif
 
 LD := $(CC)
 LDFLAGS := -pthread
-LDLIBS := -lm -lSDL3
+LDLIBS := -lm
+LDLIBS += -lSDL3 -lSDL3_ttf -lSDL3_image
 
 ifeq ($(DEBUG),ASAN)
 	CFLAGS += -fsanitize=address
