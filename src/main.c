@@ -14,7 +14,6 @@ typedef struct {
 } AppState;
 
 SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv) {
-    *appstate = SDL_malloc(sizeof(AppState));
     SDL_Window* window;
     SDL_Renderer* renderer;
 
@@ -22,22 +21,25 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv) {
         SDL_Log("Failed to set app metadata: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
-    
+
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         SDL_Log("Failed to initialize SDL: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
 
-    if (!SDL_CreateWindowAndRenderer("Hello SDL", WIDTH, HEIGHT, SDL_WINDOW_RESIZABLE, &window, &renderer)) { 
+    if (!SDL_CreateWindowAndRenderer("Hello SDL", WIDTH, HEIGHT, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
         SDL_Log("Failed to create window and renderer: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
 
     if (!SDL_SetRenderLogicalPresentation(renderer, WIDTH, HEIGHT, SDL_LOGICAL_PRESENTATION_LETTERBOX)) {
         SDL_Log("Failed to set logical presentation: %s", SDL_GetError());
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
         return SDL_APP_FAILURE;
     }
 
+    *appstate = SDL_malloc(sizeof(AppState));
     *(AppState*)*appstate = (AppState) {
         .window = window,
         .renderer = renderer
@@ -48,7 +50,7 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv) {
 
 SDL_AppResult SDL_AppIterate(void* appstate) {
     SDL_Renderer* renderer = ((AppState*)appstate)->renderer;
-    
+
     SDL_SetRenderDrawColor(renderer, 0x1e, 0x1e, 0x2e, SDL_ALPHA_OPAQUE);
 
     SDL_RenderClear(renderer);
