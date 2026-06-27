@@ -1,6 +1,6 @@
-SHELL := bash
+SHELL ?= sh
 
-CC := gcc
+CC ?= cc
 CFLAGS := -std=c99
 CFLAGS += -Iinclude
 CFLAGS += -Wall -Wextra
